@@ -1,0 +1,22 @@
+@startuml C4_Elements
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+
+System_Boundary(c1, "Dashboard"){
+    Container(visualization, "Visualization", "Grafana")
+    Container(storage, "Storage", "ClickHouse")
+    Container(data_puller, "Data Puller", "NodeJS")
+}
+
+System_Ext(tuyaCloud, "Tuya Cloud", "Tuya cloud services to manage devices")
+System_Ext(sensor, "Sensor/Device", "Tuya-compatible sensor or device")
+Person(user, "End user")
+
+Rel_R(user, visualization, "Queries")
+Rel_R(visualization, storage, "Queries")
+Rel_L(data_puller, storage, "Pushes into")
+Rel_R(data_puller, tuyaCloud, "Queries device data", "REST/HTTPS")
+Rel_D(tuyaCloud, sensor, "Queries", "Tuya protocol")
+
+
+@enduml

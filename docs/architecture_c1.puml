@@ -1,0 +1,15 @@
+@startuml C4_Elements
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+
+System(dashboard, "Dashboard", "Provides cached state of tuya devices")
+System_Ext(tuyaCloud, "Tuya Cloud", "Tuya cloud services to manage devices")
+System_Ext(sensor, "Sensor/Device", "Tuya-compatible sensor or device")
+Person(user, "End user")
+
+Rel_R(user, dashboard, "Queries", "Tuya protocol")
+Rel_R(dashboard, tuyaCloud, "Queries device data", "REST/HTTPS")
+Rel_U(tuyaCloud, sensor, "Queries", "Tuya protocol")
+
+
+@enduml
