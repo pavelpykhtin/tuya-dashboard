@@ -1,0 +1,11 @@
+{
+  "api": {
+    "key": "ekmnwp9f5pnh3trdtpgy",
+    "secret": "r3me7ghmxjevrvnpemwmhw3fxtacphyg",
+    "secret2": "jfg5rs5kkmrj5mxahugvucrsvw43t48x",
+    "certSign": "0F:C3:61:99:9C:C0:C3:5B:A8:AC:A5:7D:AA:55:93:A2:0C:F5:57:27:70:2E:A8:5A:D7:B3:22:89:49:F8:88:FE"
+  },
+  "clickhouse":{
+    "host":"http://localhost:8123"
+  }
+}

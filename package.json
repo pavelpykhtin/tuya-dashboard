@@ -1,0 +1,41 @@
+{
+  "name": "tuya-dashboard",
+  "version": "0.0.0",
+  "description": "Local dashboard for tuya sensors",
+  "type": "module",
+  "engines": {
+    "node": ">= 18.12 <19"
+  },
+  "devDependencies": {
+    "@types/node": "~18",
+    "@typescript-eslint/eslint-plugin": "~5.59",
+    "@typescript-eslint/parser": "~5.59",
+    "eslint": "~8.38",
+    "eslint-config-prettier": "~8.8",
+    "eslint-plugin-jest": "~27.2",
+    "prettier": "~2.8",
+    "rimraf": "~5.0",
+    "ts-api-utils": "~0.0.44",
+    "typescript": "~5.0"
+  },
+  "scripts": {
+    "start": "node build/src/main.js",
+    "clean": "rimraf coverage build tmp",
+    "build": "tsc -p tsconfig.json",
+    "build:watch": "tsc -w -p tsconfig.json",
+    "build:release": "npm run clean && tsc -p tsconfig.release.json",
+    "lint": "eslint . --ext .ts --ext .mts",
+    "prettier": "prettier --config .prettierrc --write ."
+  },
+  "license": "MIT",
+  "dependencies": {
+    "tslib": "~2.5",
+    "@tuyapi/cloud": "^0.4.1",
+    "command-line-args": "5.2.1",
+    "rxjs": "7.8.1",
+    "@clickhouse/client": "0.2.0"
+  },
+  "volta": {
+    "node": "18.12.1"
+  }
+}
