@@ -7,5 +7,6 @@
   },
   "clickhouse":{
     "host":"http://localhost:8123"
-  }
+  },
+  "shcemesFolder": "./device-schemes"
 }

@@ -6,9 +6,9 @@ import DeviceStateService from './services/device-state.service.js';
 import TelemetryRepository from './storage/telemetry.repository.js';
 import DbInitializer from './storage/db-initializer.js';
 import { createClient } from '@clickhouse/client';
-import Device from './api/models/device.js';
 import { Metric } from './storage/telemetry.repository.js';
 import { map, tap } from 'rxjs/operators';
+import TelemetryExtractorService from './services/telemetry-adapter.service.js';
 
 const optionDefinitions = [
   { name: 'config', alias: 'c', type: String, defaultValue: './config.json' },
@@ -33,7 +33,7 @@ const dbInitializer = new DbInitializer(clickhouseClient);
 await dbInitializer.initialize();
 
 const telemetryRepository = new TelemetryRepository(clickhouseClient);
-
+const metricExtractor = new TelemetryExtractorService(config.shcemesFolder);
 
 console.log("Authorizing...");
 await tuya.auth(options.email, options.password);
@@ -44,7 +44,7 @@ const deviceService = new DeviceStateService(tuya);
 const devices$ = deviceService.devices
   .pipe(
     map(devices => devices.reduce((acc: Metric[], device) => {
-      acc.push(...extractMetrics(new Date(), device));
+      acc.push(...metricExtractor.extract(new Date(), device));
       return acc;
     }, [])),
     tap(x => console.log(x)))
@@ -68,31 +68,4 @@ function waitForKeyboard() {
       resolve(null);
     });
   });
-}
-
-function extractMetrics(timestamp: Date, device: Device): Metric[] {
-  const utcTimestamp = Math.floor(timestamp.getTime() / 1000);
-
-  switch(device.productId){
-    case 'g2y6z3p3ja2qhyav':
-      return [{
-        deviceId: device.devId,
-        timestamp: utcTimestamp,
-        value: +device.dps[1] / 10,
-        key: 'temperature'
-      },{
-        deviceId: device.devId,
-        timestamp: utcTimestamp,
-        value: +device.dps[2],
-        key: 'humidity'
-      },
-      {
-        deviceId: device.devId,
-        timestamp: utcTimestamp,
-        value: +device.dps[4],
-        key: 'battery'
-      }];
-    default:
-      return [];
-  }
 }
