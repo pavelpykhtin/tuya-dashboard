@@ -41,18 +41,12 @@ export default class Tuya {
       throw new Error('No device groups');
     }
 
-    this.delay(1000);
-
     const results = groups
       .map(group =>
         this.request({ action: 'tuya.m.my.group.device.list', gid: group.groupId })
           .then(data => ({ group, data })));
 
     return await Promise.all(results);
-  }
-
-  delay(timeout: number) {
-    return new Promise(resolve => setTimeout(resolve, timeout));
   }
 
   async getSchemas(gids) {

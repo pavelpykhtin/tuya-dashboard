@@ -1,0 +1,10 @@
+{
+  "productId": "gu4vs8axzlw5ptw3",
+  "metrics": [
+    {
+      "key": "floor_temperature",
+      "scale": 10,
+      "index": 103
+    }
+  ]
+}

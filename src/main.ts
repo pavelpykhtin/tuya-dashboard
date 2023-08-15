@@ -39,7 +39,6 @@ console.log("Authorizing...");
 await tuya.auth(options.email, options.password);
 console.log("Authorized");
 
-
 const deviceService = new DeviceStateService(tuya);
 const devices$ = deviceService.devices
   .pipe(
