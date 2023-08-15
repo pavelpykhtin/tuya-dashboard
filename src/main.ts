@@ -7,8 +7,9 @@ import TelemetryRepository from './storage/telemetry.repository.js';
 import DbInitializer from './storage/db-initializer.js';
 import { createClient } from '@clickhouse/client';
 import { Metric } from './storage/telemetry.repository.js';
-import { map, tap } from 'rxjs/operators';
+import { map, tap, first } from 'rxjs/operators';
 import TelemetryExtractorService from './services/telemetry-adapter.service.js';
+import DeviceRepository from './storage/device.repository.js';
 
 const optionDefinitions = [
   { name: 'config', alias: 'c', type: String, defaultValue: './config.json' },
@@ -33,6 +34,7 @@ const dbInitializer = new DbInitializer(clickhouseClient);
 await dbInitializer.initialize();
 
 const telemetryRepository = new TelemetryRepository(clickhouseClient);
+const deviceRepository = new DeviceRepository(clickhouseClient);
 const metricExtractor = new TelemetryExtractorService(config.shcemesFolder);
 
 console.log("Authorizing...");
@@ -40,7 +42,13 @@ await tuya.auth(options.email, options.password);
 console.log("Authorized");
 
 const deviceService = new DeviceStateService(tuya);
-const devices$ = deviceService.devices
+const devices$ = deviceService.devices;
+
+devices$
+  .pipe(first())
+  .subscribe(x => deviceRepository.upsert(x));
+
+const telemetryFeed$ = devices$
   .pipe(
     map(devices => devices.reduce((acc: Metric[], device) => {
       acc.push(...metricExtractor.extract(new Date(), device));
@@ -55,7 +63,7 @@ await waitForKeyboard();
 
 console.log("Cleanup");
 
-devices$.unsubscribe();
+telemetryFeed$.unsubscribe();
 
 function waitForKeyboard() {
   return new Promise(resolve => {

@@ -2,8 +2,8 @@ export default class DbInitializer {
   constructor(private client: any) {
   }
 
-  initialize(): Promise<any> {
-    return this.client.command({
+  async initialize(): Promise<any> {
+    await this.client.command({
       query: `create table if not exists telemetry2
           (
             deviceId String,
@@ -12,6 +12,14 @@ export default class DbInitializer {
             key String)
           engine MergeTree()
           order by timestamp`,
+    });
+    this.client.command({
+      query: `create table if not exists devices
+          (
+            id String,
+            name String)
+          engine ReplacingMergeTree()
+          primary Key (id)`,
     });
   }
 }
